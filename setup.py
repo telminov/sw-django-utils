@@ -3,11 +3,11 @@ from distutils.core import setup
 
 setup(
     name='sw-django-utils',
-    version='0.0.1',
+    version='0.0.2',
     description='Soft Way company django utils.',
     author='Telminov Sergey',
     url='https://github.com/telminov/sw-django-utils',
-    packages=['swutils',],
+    packages=['djutils',],
     license='The MIT License',
     install_requires=[
         'django',
