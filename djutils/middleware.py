@@ -1,17 +1,11 @@
 # coding: utf-8
 from django import http
+from django.conf import settings
 
-try:
-    from django.conf import settings
-    XS_SHARING_ALLOWED_ORIGINS = settings.XS_SHARING_ALLOWED_ORIGINS
-    XS_SHARING_ALLOWED_METHODS = settings.XS_SHARING_ALLOWED_METHODS
-    XS_SHARING_ALLOWED_HEADERS = settings.XS_SHARING_ALLOWED_HEADERS
-    XS_SHARING_ALLOWED_CREDENTIALS = settings.XS_SHARING_ALLOWED_CREDENTIALS
-except AttributeError:
-    XS_SHARING_ALLOWED_ORIGINS = '*'
-    XS_SHARING_ALLOWED_METHODS = ['POST', 'GET', 'OPTIONS', 'PUT', 'DELETE']
-    XS_SHARING_ALLOWED_HEADERS = ['Content-Type', '*']
-    XS_SHARING_ALLOWED_CREDENTIALS = 'true'
+XS_SHARING_ALLOWED_ORIGINS = getattr(settings, 'XS_SHARING_ALLOWED_ORIGINS', '*')
+XS_SHARING_ALLOWED_METHODS = getattr(settings, 'XS_SHARING_ALLOWED_METHODS', ['POST', 'GET', 'OPTIONS', 'PUT', 'DELETE'])
+XS_SHARING_ALLOWED_HEADERS = getattr(settings, 'XS_SHARING_ALLOWED_HEADERS', ['Content-Type', '*'])
+XS_SHARING_ALLOWED_CREDENTIALS = getattr(settings, 'XS_SHARING_ALLOWED_CREDENTIALS', 'true')
 
 
 class XsSharing(object):
