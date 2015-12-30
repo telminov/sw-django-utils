@@ -10,6 +10,7 @@ def date_to_datetime(date):
     else:
         return None
 
+
 def date_to_datetime_lte(date):
     return datetime.datetime.combine(date, datetime.time(23, 59, 59))
 
@@ -27,6 +28,12 @@ def iso_to_datetime(datetime_iso):
     else:
         return None
 
+
+def rus_to_date(date_rus):
+    if date_rus:
+        return datetime.datetime.strptime(date_rus, '%d.%m.%Y').date()
+    else:
+        return None
 
 
 def date_to_timestamp(date):
