@@ -4,7 +4,7 @@ from distutils.core import setup
 
 setup(
     name='sw-django-utils',
-    version='0.0.12',
+    version='0.0.13',
     description='Soft Way company django utils.',
     author='Telminov Sergey',
     url='https://github.com/telminov/sw-django-utils',
@@ -13,6 +13,8 @@ setup(
         'djutils.views',
         'djutils.tests',
         'djutils.templatetags',
+        'djutils.management',
+        'djutils.management.commands',
     ],
     license='The MIT License',
     install_requires=[
