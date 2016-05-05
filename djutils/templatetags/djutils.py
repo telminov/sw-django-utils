@@ -23,3 +23,9 @@ def pretty_json(json_text):
         return pretty_json_text
     except Exception:
         return json_text
+
+
+@register.filter('from')
+def get_value_from_dict(dict, key):
+    return dict.get(key)
+# example {{ your_dict|get_value_from_dict:your_key }}
