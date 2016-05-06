@@ -25,10 +25,10 @@ def pretty_json(json_text):
         return json_text
 
 
-@register.filter('from')
-def get_value_from_dict(dict, key):
+@register.filter('get_value_from_dict')
+def get_value_from_dict(dict_data, key):
     """
     usage example {{ your_dict|get_value_from_dict:your_key }}
     """
-    return dict.get(key)
-
+    if key:
+        return dict_data.get(key)
