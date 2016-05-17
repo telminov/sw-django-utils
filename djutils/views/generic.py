@@ -15,3 +15,17 @@ class TitleMixin:
             c['title'] = title
 
         return c
+
+
+class LoggerMixin:
+    logger = None
+
+    def get(self, request, *args, **kwargs):
+        response = super().get(request, *args, **kwargs)
+        self.logger.debug(self.get_title(), extra={'GET': request.GET, 'username': request.user.username})
+        return response
+
+    def post(self, request, *args, **kwargs):
+        response = super().get(request, *args, **kwargs)
+        self.logger.info(self.get_title(), extra={'POST': self.request.POST, 'username': self.request.user.username})
+        return response
