@@ -32,3 +32,14 @@ def get_value_from_dict(dict_data, key):
     """
     if key:
         return dict_data.get(key)
+
+
+@register.inclusion_tag('djutils/sort_th.html', takes_context=True)
+def sort_th(context, sort_param_name, label):
+    return {
+        'is_current': context['sort_params'][sort_param_name]['is_current'],
+        'is_reversed': context['sort_params'][sort_param_name]['is_reversed'],
+        'url': context['sort_params'][sort_param_name]['url'],
+        'label': label,
+    }
+

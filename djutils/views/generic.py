@@ -1,4 +1,6 @@
 # coding: utf-8
+from django.shortcuts import redirect
+from djutils.views.helpers import prepare_sort_params
 
 
 class TitleMixin:
@@ -29,3 +31,36 @@ class LoggerMixin:
         response = super().post(request, *args, **kwargs)
         self.logger.info(self.get_title(), extra={'POST': self.request.POST, 'username': self.request.user.username})
         return response
+
+
+class SortMixin:
+    sort_params = None          # must be defined
+    sort_param_name = 'sort'
+    sort_qs = True
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        if self.sort_qs:
+            order_by = self.request.GET[self.sort_param_name]
+            qs = qs.order_by(order_by)
+        return qs
+
+    def get(self, request, *args, **kwargs):
+        if not request.GET.get(self.sort_param_name):
+            redirect_url = request.get_full_path()
+            if not request.GET:
+                redirect_url += '?'
+            redirect_url += self.sort_param_name + '=' + self.get_default_sort_param()
+            return redirect(redirect_url)
+
+        response = super().get(request, *args, **kwargs)
+        return response
+
+    def get_default_sort_param(self):
+        return self.sort_params[0]
+
+    def get_context_data(self, **kwargs):
+        c = super().get_context_data(**kwargs)
+        c['sort_params'] = prepare_sort_params(self.sort_params, request=self.request, sort_key=self.sort_param_name)
+        return c
+
