@@ -50,6 +50,8 @@ class SortMixin:
             redirect_url = request.get_full_path()
             if not request.GET:
                 redirect_url += '?'
+            else:
+                redirect_url += '&'
             redirect_url += self.sort_param_name + '=' + self.get_default_sort_param()
             return redirect(redirect_url)
 
@@ -59,8 +61,28 @@ class SortMixin:
     def get_default_sort_param(self):
         return self.sort_params[0]
 
+    def get_sort_except_params(self):
+        except_params = []
+        if self.page_kwarg:
+            except_params.append(self.page_kwarg)
+        return except_params
+
     def get_context_data(self, **kwargs):
         c = super().get_context_data(**kwargs)
-        c['sort_params'] = prepare_sort_params(self.sort_params, request=self.request, sort_key=self.sort_param_name)
+        c['sort_params'] = prepare_sort_params(self.sort_params, request=self.request, sort_key=self.sort_param_name, except_params=self.get_sort_except_params())
+        return c
+
+
+class FilterMixin:
+    filter = None
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        self.filter_obj = self.filter(self.request.GET, qs)
+        return self.filter_obj.qs
+
+    def get_context_data(self, **kwargs):
+        c = super().get_context_data(**kwargs)
+        c['form'] = self.filter_obj.form
         return c
 
