@@ -4,7 +4,7 @@ from distutils.core import setup
 
 setup(
     name='sw-django-utils',
-    version='0.0.22',
+    version='0.0.23',
     description='Soft Way company django utils.',
     author='Telminov Sergey',
     url='https://github.com/telminov/sw-django-utils',
