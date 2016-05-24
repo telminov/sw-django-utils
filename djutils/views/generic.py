@@ -63,13 +63,18 @@ class SortMixin:
 
     def get_sort_except_params(self):
         except_params = []
-        if self.page_kwarg:
+        if hasattr(self, 'page_kwarg') and self.page_kwarg:
             except_params.append(self.page_kwarg)
         return except_params
 
     def get_context_data(self, **kwargs):
         c = super().get_context_data(**kwargs)
-        c['sort_params'] = prepare_sort_params(self.sort_params, request=self.request, sort_key=self.sort_param_name, except_params=self.get_sort_except_params())
+        c['sort_params'] = prepare_sort_params(
+            self.sort_params,
+            request=self.request,
+            sort_key=self.sort_param_name,
+            except_params=self.get_sort_except_params()
+        )
         return c
 
 
