@@ -91,3 +91,10 @@ class FilterMixin:
         c['form'] = self.filter_obj.form
         return c
 
+
+class PageMixin:
+    def get_context_data(self, **kwargs):
+        c = super().get_context_data(**kwargs)
+        if c.get('page_obj'):
+            c['start_counter'] = (c['page_obj'].number - 1) * c['page_obj'].paginator.per_page
+        return c
