@@ -28,8 +28,9 @@ class LoggerMixin:
         return response
 
     def post(self, request, *args, **kwargs):
+        title = self.get_title()
         response = super().post(request, *args, **kwargs)
-        self.logger.info(self.get_title(), extra={'POST': self.request.POST, 'username': self.request.user.username})
+        self.logger.info(title, extra={'POST': self.request.POST, 'username': self.request.user.username})
         return response
 
 
