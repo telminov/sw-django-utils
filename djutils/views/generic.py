@@ -59,8 +59,9 @@ class SortMixin:
         response = super().get(request, *args, **kwargs)
         return response
 
-    def get_default_sort_param(self):
-        return self.sort_params[0]
+    @classmethod
+    def get_default_sort_param(cls):
+        return cls.sort_params[0]
 
     def get_sort_except_params(self):
         except_params = []
