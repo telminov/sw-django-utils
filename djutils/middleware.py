@@ -1,6 +1,8 @@
 # coding: utf-8
+import re
 from django import http
 from django.conf import settings
+from django.http import HttpResponseRedirect
 
 XS_SHARING_ALLOWED_ORIGINS = getattr(settings, 'XS_SHARING_ALLOWED_ORIGINS', '*')
 XS_SHARING_ALLOWED_METHODS = getattr(settings, 'XS_SHARING_ALLOWED_METHODS', ['POST', 'GET', 'OPTIONS', 'PUT', 'DELETE'])
@@ -40,4 +42,21 @@ class XsSharing(object):
         response['Access-Control-Allow-Headers'] = ",".join( XS_SHARING_ALLOWED_HEADERS )
         response['Access-Control-Allow-Credentials'] = XS_SHARING_ALLOWED_CREDENTIALS
 
+        return response
+
+
+EXEMPT_URLS = [re.compile(settings.LOGIN_URL.lstrip('/'))]
+if hasattr(settings, 'LOGIN_EXEMPT_URLS'):
+    EXEMPT_URLS += [re.compile(expr.lstrip('/')) for expr in settings.LOGIN_EXEMPT_URLS]
+
+class LoginRequired(object):
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        if not request.user.is_authenticated():
+            path = request.path_info.lstrip('/')
+            if not any(m.match(path) for m in EXEMPT_URLS):
+                return HttpResponseRedirect(settings.LOGIN_URL)
+        response = self.get_response(request)
         return response
