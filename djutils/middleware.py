@@ -45,9 +45,9 @@ class XsSharing(object):
         return response
 
 
-EXEMPT_URLS = [re.compile(settings.LOGIN_URL.lstrip('/'))]
+EXEMPT_URLS = [re.compile(settings.LOGIN_URL)]
 if hasattr(settings, 'LOGIN_EXEMPT_URLS'):
-    EXEMPT_URLS += [re.compile(expr.lstrip('/')) for expr in settings.LOGIN_EXEMPT_URLS]
+    EXEMPT_URLS += [re.compile(expr) for expr in settings.LOGIN_EXEMPT_URLS]
 
 class LoginRequired(object):
     def __init__(self, get_response):
@@ -55,7 +55,7 @@ class LoginRequired(object):
 
     def __call__(self, request):
         if not request.user.is_authenticated():
-            path = request.path_info.lstrip('/')
+            path = request.path_info
             if not any(m.match(path) for m in EXEMPT_URLS):
                 return HttpResponseRedirect(settings.LOGIN_URL)
         response = self.get_response(request)
