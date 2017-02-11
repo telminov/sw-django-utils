@@ -1,5 +1,6 @@
 # coding: utf-8
 import re
+from urllib.parse import quote
 from django import http
 from django.conf import settings
 from django.http import HttpResponseRedirect
@@ -45,7 +46,10 @@ class XsSharing(object):
         return response
 
 
-EXEMPT_URLS = [re.compile(settings.LOGIN_URL)]
+EXEMPT_URLS = [
+    re.compile(getattr(settings, 'LOGIN_URL', '/login/')),
+    re.compile(getattr(settings, 'LOGOUT_URL', '/logout/')),
+]
 if hasattr(settings, 'LOGIN_EXEMPT_URLS'):
     EXEMPT_URLS += [re.compile(expr) for expr in settings.LOGIN_EXEMPT_URLS]
 
@@ -57,6 +61,8 @@ class LoginRequired(object):
         if not request.user.is_authenticated():
             path = request.path_info
             if not any(m.match(path) for m in EXEMPT_URLS):
-                return HttpResponseRedirect(settings.LOGIN_URL)
+                next = '?next=%s' % quote(path)
+                url = settings.LOGIN_URL + next
+                return HttpResponseRedirect(url)
         response = self.get_response(request)
         return response
