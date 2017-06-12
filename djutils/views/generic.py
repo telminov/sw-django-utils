@@ -1,6 +1,13 @@
 # coding: utf-8
+from urllib.parse import quote
+
 from django.shortcuts import redirect
 from djutils.views.helpers import prepare_sort_params
+from django.http import QueryDict
+from django.shortcuts import redirect
+from django.urls import reverse
+from django.views.generic.edit import FormMixin as DjangoFormMixin
+from django.contrib.auth.mixins import PermissionRequiredMixin as PermissionRequiredMixinAuth
 
 
 class TitleMixin:
@@ -100,3 +107,63 @@ class PageMixin:
         if c.get('page_obj'):
             c['start_counter'] = (c['page_obj'].number - 1) * c['page_obj'].paginator.per_page
         return c
+
+
+class BreadcrumbsMixin:
+    def get_breadcrumbs(self):
+        return []
+
+    def get_context_data(self, **kwargs):
+        kwargs['breadcrumbs'] = self.get_breadcrumbs()
+        return super().get_context_data(**kwargs)
+
+
+class FormMixin(DjangoFormMixin):
+    request_method = 'post'
+
+    def form_process(self):
+        form = self.get_form()
+        if form.is_valid():
+            return self.form_valid(form)
+        else:
+            return self.form_invalid(form)
+
+    def get(self, *args, **kwargs):
+        if self.request_method == 'get':
+            return self.form_process()
+
+        return super().get(*args, **kwargs)
+
+    def post(self, *args, **kwargs):
+        if self.request_method == 'post':
+            return self.form_process()
+
+        return super().post(*args, **kwargs)
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['data'] = getattr(self.request, self.request_method.upper(), None) or None
+        return kwargs
+
+
+class NextMixin:
+    def get_next(self):
+        return self.request.GET.get('next')
+
+    def get_context_data(self, **kwargs):
+        kwargs['next'] = self.get_next()
+        return super().get_context_data(**kwargs)
+
+
+class PermissionRequiredMixin(PermissionRequiredMixinAuth):
+    def handle_no_permission(self):
+        url = reverse('permission_denied')
+        params = QueryDict(mutable=True)
+        params['url'] = self.request.path
+
+        previous_url = self.request.META.get('HTTP_REFERER')
+        if previous_url:
+            params['next'] = quote(previous_url)
+        url += '?%s' % params.urlencode()
+
+        return redirect(url)
