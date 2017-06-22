@@ -91,13 +91,13 @@ class LoggerMixin(object):
     logger = None
 
     def get(self, request, *args, **kwargs):
-        response = super(self, LoggerMixin).get(request, *args, **kwargs)
+        response = super(LoggerMixin, self).get(request, *args, **kwargs)
         self.logger.debug(self.get_title(), extra={'GET': request.GET, 'username': request.user.username})
         return response
 
     def post(self, request, *args, **kwargs):
         title = self.get_title()
-        response = super(self, LoggerMixin).post(request, *args, **kwargs)
+        response = super(LoggerMixin, self).post(request, *args, **kwargs)
         self.logger.info(title, extra={'POST': self.request.POST, 'username': self.request.user.username})
         return response
 
@@ -108,7 +108,7 @@ class SortMixin(object):
     sort_qs = True
 
     def get_queryset(self):
-        qs = super(self, SortMixin).get_queryset()
+        qs = super(SortMixin, self).get_queryset()
         if self.sort_qs:
             order_by = self.request.GET[self.sort_param_name]
             qs = qs.order_by(order_by)
@@ -124,7 +124,7 @@ class SortMixin(object):
             redirect_url += self.sort_param_name + '=' + self.get_default_sort_param()
             return redirect(redirect_url)
 
-        response = super(self, SortMixin).get(request, *args, **kwargs)
+        response = super(SortMixin, self).get(request, *args, **kwargs)
         return response
 
     @classmethod
@@ -138,7 +138,7 @@ class SortMixin(object):
         return except_params
 
     def get_context_data(self, **kwargs):
-        c = super(self, SortMixin).get_context_data(**kwargs)
+        c = super(SortMixin, self).get_context_data(**kwargs)
         c['sort_params'] = prepare_sort_params(
             self.sort_params,
             request=self.request,
@@ -152,19 +152,19 @@ class FilterMixin(object):
     filter = None
 
     def get_queryset(self):
-        qs = super(self, FilterMixin).get_queryset()
+        qs = super(FilterMixin, self).get_queryset()
         self.filter_obj = self.filter(self.request.GET, qs)
         return self.filter_obj.qs
 
     def get_context_data(self, **kwargs):
-        c = super(self, FilterMixin).get_context_data(**kwargs)
+        c = super(FilterMixin, self).get_context_data(**kwargs)
         c['form'] = self.filter_obj.form
         return c
 
 
-class PageMixin:
+class PageMixin(object):
     def get_context_data(self, **kwargs):
-        c = super(self, PageMixin).get_context_data(**kwargs)
+        c = super(PageMixin, self).get_context_data(**kwargs)
         if c.get('page_obj'):
             c['start_counter'] = (c['page_obj'].number - 1) * c['page_obj'].paginator.per_page
         return c
@@ -176,7 +176,7 @@ class BreadcrumbsMixin(object):
 
     def get_context_data(self, **kwargs):
         kwargs['breadcrumbs'] = self.get_breadcrumbs()
-        return super(self, BreadcrumbsMixin).get_context_data(**kwargs)
+        return super(BreadcrumbsMixin, self).get_context_data(**kwargs)
 
 
 class FormMixin(DjangoFormMixin):
@@ -193,16 +193,16 @@ class FormMixin(DjangoFormMixin):
         if self.request_method == 'get':
             return self.form_process()
 
-        return super(self, FormMixin).get(*args, **kwargs)
+        return super(FormMixin, self).get(*args, **kwargs)
 
     def post(self, *args, **kwargs):
         if self.request_method == 'post':
             return self.form_process()
 
-        return super(self, FormMixin).post(*args, **kwargs)
+        return super(FormMixin, self).post(*args, **kwargs)
 
     def get_form_kwargs(self):
-        kwargs = super(self, FormMixin).get_form_kwargs()
+        kwargs = super(FormMixin, self).get_form_kwargs()
         kwargs['data'] = getattr(self.request, self.request_method.upper(), None) or None
         return kwargs
 
@@ -213,7 +213,7 @@ class NextMixin(object):
 
     def get_context_data(self, **kwargs):
         kwargs['next'] = self.get_next()
-        return super(self, NextMixin).get_context_data(**kwargs)
+        return super(NextMixin, self).get_context_data(**kwargs)
 
 
 class PermissionRequiredMixin(PermissionRequiredMixinAuth):

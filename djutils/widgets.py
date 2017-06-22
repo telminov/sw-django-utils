@@ -7,7 +7,7 @@ class NameInput(forms.TextInput):
     media = forms.Media(js=(['djutils/js/capitalize.js']))
 
     def render(self, name, *args, **kwargs):
-        return super(self, NameInput).render(name, *args, **kwargs) + mark_safe(
+        return super(NameInput, self).render(name, *args, **kwargs) + mark_safe(
             '''
                 <script type="text/javascript">
                     capitalize('input[type=text][name={}]');
