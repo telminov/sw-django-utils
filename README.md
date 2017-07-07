@@ -7,9 +7,9 @@ pip install sw-django-utils
 ```
 2. Add ``sw-django-utils`` to your ``INSTALLED_APPS``:
 ```python
-INSTALLED_APPS += (
+INSTALLED_APPS += [
     'djutils',
-)
+]
 ```
 ## Using Sorting
 In view:
@@ -31,4 +31,19 @@ In template:
     </tr>
     ...
 </table>    
+```
+
+## Using LoginRequired middleware
+Add to settings
+```python
+MIDDLEWARE += [
+   'djutils.middleware.LoginRequired',
+]
+
+LOGIN_URL = '/login/'
+
+# exemptions if needed
+LOGIN_EXEMPT_URLS = [
+  '^/static/',
+]
 ```
