@@ -6,10 +6,7 @@ from django.utils.safestring import mark_safe
 
 def url_path(request, base_url=None, is_full=False, *args, **kwargs):
     """
-        функция формирует полный урл, позволяя исключать некоторые GET-параметры
-
-        пример:
-
+    функция формирует полный урл, позволяя исключать некоторые GET-параметры
     """
     if not base_url:
         base_url = request.path
