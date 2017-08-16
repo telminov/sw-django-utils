@@ -8,7 +8,7 @@ from django.core.exceptions import ImproperlyConfigured, PermissionDenied
 from django.shortcuts import redirect
 from django.utils.encoding import force_text
 
-from djutils.views.helpers import prepare_sort_params
+from djutils.views.helpers import prepare_sort_params, url_path
 from django.http import QueryDict
 from django.views.generic.edit import FormMixin as DjangoFormMixin
 
@@ -228,3 +228,12 @@ class PermissionRequiredMixin(PermissionRequiredMixinAuth):
         url += '?%s' % params.urlencode()
 
         return redirect(url)
+
+
+class CurrentUrlMixin(object):
+    is_full_current_url = False
+
+    def get_context_data(self, **kwargs):
+        c = super(CurrentUrlMixin, self).get_context_data(**kwargs)
+        c['current_url'] = url_path(self.request, use_urllib=True, is_full=self.is_full_current_url)
+        return c
