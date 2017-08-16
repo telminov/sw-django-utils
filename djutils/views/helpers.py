@@ -6,7 +6,14 @@ from django.utils.safestring import mark_safe
 
 def url_path(request, base_url=None, is_full=False, *args, **kwargs):
     """
-    функция формирует полный урл, позволяя исключать некоторые GET-параметры
+    join base_url and some GET-parameters to one; it could be absolute url optionally
+
+    usage example:
+
+        c['current_url'] = url_path(request, use_urllib=True, is_full=False)
+        ...
+        <a href="{{ current_url }}">Лабораторный номер</a>
+
     """
     if not base_url:
         base_url = request.path
