@@ -14,7 +14,7 @@ setup(
     license='The MIT License',
     install_requires=[
         'django',
-        'sqlparse==0.1.16',
+        'sqlparse==0.1.17',
         'sw-python-utils',
     ],
 )
