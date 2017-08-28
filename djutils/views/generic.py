@@ -235,5 +235,5 @@ class CurrentUrlMixin(object):
 
     def get_context_data(self, **kwargs):
         c = super(CurrentUrlMixin, self).get_context_data(**kwargs)
-        c['current_url'] = url_path(self.request, use_urllib=True, is_full=self.is_full_current_url)
+        c['current_url'] = url_path(self.request, is_full=self.is_full_current_url)
         return c
