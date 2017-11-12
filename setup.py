@@ -4,7 +4,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='sw-django-utils',
-    version='0.0.41',
+    version='0.0.42',
     description='Soft Way company django utils.',
     author='Telminov Sergey',
     author_email='sergey@telminov.ru',
@@ -14,6 +14,7 @@ setup(
     license='The MIT License',
     install_requires=[
         'django',
+        'six;python_version>"3"',
         'sqlparse==0.1.16',
         'sw-python-utils',
     ],
