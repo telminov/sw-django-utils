@@ -1,6 +1,6 @@
 /** функиция приводит к верхниму регистру каждое слово в элементе input[type='text'] */
 function capitalize(rawInput) {
-    var EXCLUSIONS = ['угли', 'углы', 'кызы', 'оглы', 'уулу'];
+    var EXCLUSIONS = ['угли', 'углы', 'кызы', 'оглы', 'уулу', 'кизи', 'огли'];
     var input = $(rawInput);
 
     input.focusout(function(){
