@@ -3,8 +3,14 @@ import json
 
 from django import template
 import sqlparse
+from djutils import date_utils
 
 register = template.Library()
+
+
+@register.filter('iso_to_date')
+def iso_to_date(date_iso):
+    return date_utils.iso_to_date(date_iso)
 
 
 @register.filter('pretty_sql')
