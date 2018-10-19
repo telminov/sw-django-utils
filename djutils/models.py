@@ -1,4 +1,5 @@
 # coding: utf-8
+import six
 from django.db import models
 from django.conf import settings
 from swutils.encrypt import decrypt, encrypt
@@ -23,14 +24,21 @@ class OneValueModel(models.Model):
         value = instance.value
 
         if decrypt_it:
-            value = decrypt(value, key=settings.SECRET_KEY)
+            value = decrypt(value, key=cls._get_key())
 
         return value
 
     @classmethod
     def set_value(cls, name, value, encrypt_it=False):
         if encrypt_it:
-            value = encrypt(value, key=settings.SECRET_KEY)
+            value = encrypt(value, key=cls._get_key())
 
         cls.objects.get_or_create(name=name)    # create if needed
         return cls.objects.filter(name=name).update(value=value)
+
+    @classmethod
+    def _get_key(cls):
+        key = settings.SECRET_KEY
+        if isinstance(key, six.text_type):
+            key = key.encode()
+        return key
