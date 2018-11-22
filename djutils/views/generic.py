@@ -110,6 +110,10 @@ class SortMixin(object):
 
     def get_queryset(self):
         qs = super(SortMixin, self).get_queryset()
+
+        if not self.sort_default and not self.request.GET:
+            return qs
+
         if self.sort_qs:
             order_by = self.request.GET[self.sort_param_name]
             qs = qs.order_by(order_by)
