@@ -109,16 +109,20 @@ class SortMixin(object):
     sort_default = True
 
     def get_queryset(self):
-        if not self.sort_default and not request.GET:
-            return super().get(request, *args, **kwargs)
-        
         qs = super(SortMixin, self).get_queryset()
+
+        if not self.sort_default and not self.request.GET:
+            return qs
+
         if self.sort_qs:
             order_by = self.request.GET[self.sort_param_name]
             qs = qs.order_by(order_by)
         return qs
 
     def get(self, request, *args, **kwargs):
+        if not self.sort_default and not request.GET:
+            return super().get(request, *args, **kwargs)
+
         if not request.GET.get(self.sort_param_name):
             redirect_url = request.get_full_path()
             if not request.GET:
