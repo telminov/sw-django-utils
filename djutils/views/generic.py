@@ -108,6 +108,9 @@ class SortMixin(object):
     sort_qs = True
     sort_default = True
 
+    def get_sort_param_name(self):
+        return self.sort_param_name
+
     def get_queryset(self):
         qs = super(SortMixin, self).get_queryset()
 
@@ -115,7 +118,7 @@ class SortMixin(object):
             return qs
 
         if self.sort_qs:
-            order_by = self.request.GET[self.sort_param_name]
+            order_by = self.request.GET[self.get_sort_param_name()]
             qs = qs.order_by(order_by)
         return qs
 
@@ -123,13 +126,13 @@ class SortMixin(object):
         if not self.sort_default and not request.GET:
             return super().get(request, *args, **kwargs)
 
-        if not request.GET.get(self.sort_param_name):
+        if not request.GET.get(self.get_sort_param_name()):
             redirect_url = request.get_full_path()
             if not request.GET:
                 redirect_url += '?'
             else:
                 redirect_url += '&'
-            redirect_url += self.sort_param_name + '=' + self.get_default_sort_param()
+            redirect_url += self.get_sort_param_name() + '=' + self.get_default_sort_param()
             return redirect(redirect_url)
 
         response = super(SortMixin, self).get(request, *args, **kwargs)
@@ -150,7 +153,7 @@ class SortMixin(object):
         c['sort_params'] = prepare_sort_params(
             self.sort_params,
             request=self.request,
-            sort_key=self.sort_param_name,
+            sort_key=self.get_sort_param_name(),
             except_params=self.get_sort_except_params()
         )
         return c
