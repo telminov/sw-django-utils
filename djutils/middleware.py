@@ -53,12 +53,13 @@ EXEMPT_URLS = [
 if hasattr(settings, 'LOGIN_EXEMPT_URLS'):
     EXEMPT_URLS += [re.compile(expr) for expr in settings.LOGIN_EXEMPT_URLS]
 
+
 class LoginRequired(object):
     def __init__(self, get_response):
         self.get_response = get_response
 
     def __call__(self, request):
-        if not request.user.is_authenticated():
+        if not request.user.is_authenticated:
             path = request.path_info
             if not any(m.match(path) for m in EXEMPT_URLS):
                 next = '?next=%s' % quote(path)
