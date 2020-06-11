@@ -15,7 +15,7 @@ setup(
     install_requires=[
         'django',
         'six;python_version>"3"',
-        'sqlparse==0.1.16',
+        'sqlparse==0.3.1',
         'sw-python-utils',
     ],
 )
