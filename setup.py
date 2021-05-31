@@ -4,7 +4,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='sw-django-utils',
-    version='0.0.52',
+    version='0.0.53',
     description='Soft Way company django utils.',
     author='Telminov Sergey',
     author_email='sergey@telminov.ru',
