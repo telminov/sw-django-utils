@@ -38,9 +38,11 @@ def url_params(request, except_params=None, as_is=False):
         return ''
     params = []
     for key, value in request.GET.items():
-        if except_params and key not in except_params:
-            for v in request.GET.getlist(key):
-                params.append('%s=%s' % (key, urlquote(v)))
+        if except_params and key in except_params:
+            continue
+
+        for v in request.GET.getlist(key):
+            params.append('%s=%s' % (key, urlquote(v)))
 
     if as_is:
         str_params = '?' + '&'.join(params)
