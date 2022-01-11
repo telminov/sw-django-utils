@@ -1,8 +1,9 @@
 # coding: utf-8
 import re
 
-from django.utils.http import urlquote
+import urllib.parse
 from django.utils.safestring import mark_safe
+
 
 def url_path(request, base_url=None, is_full=False, *args, **kwargs):
     """
@@ -42,13 +43,13 @@ def url_params(request, except_params=None, as_is=False):
             continue
 
         for v in request.GET.getlist(key):
-            params.append('%s=%s' % (key, urlquote(v)))
+            params.append('%s=%s' % (key, urllib.parse.quote(v)))
 
     if as_is:
         str_params = '?' + '&'.join(params)
     else:
         str_params = '?' + '&'.join(params)
-        str_params = urlquote(str_params)
+        str_params = urllib.parse.quote(str_params)
     return mark_safe(str_params)
 
 

@@ -6,7 +6,7 @@ from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.contrib.auth.views import redirect_to_login
 from django.core.exceptions import ImproperlyConfigured, PermissionDenied
 from django.shortcuts import redirect
-from django.utils.encoding import force_text
+from django.utils.encoding import force_str
 
 from djutils.views.helpers import prepare_sort_params, url_path
 from django.http import QueryDict
@@ -36,7 +36,7 @@ except ImportError:
                     '{0} is missing the login_url attribute. Define {0}.login_url, settings.LOGIN_URL, or override '
                     '{0}.get_login_url().'.format(self.__class__.__name__)
                 )
-            return force_text(login_url)
+            return force_str(login_url)
 
         def get_permission_denied_message(self):
             return self.permission_denied_message
