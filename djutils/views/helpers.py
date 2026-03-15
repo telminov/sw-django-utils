@@ -53,7 +53,7 @@ def url_params(request, except_params=None, as_is=False):
     return mark_safe(str_params)
 
 
-def prepare_sort_params(params, request, sort_key='sort', revers_sort=None, except_params=None):
+def prepare_sort_params(params, request, sort_key='sort', revers_sort=None, except_params=None, current_sort=None):
     """
         Prepare sort params. Add revers '-' if need.
         Params:
@@ -62,6 +62,7 @@ def prepare_sort_params(params, request, sort_key='sort', revers_sort=None, exce
             sort_key
             revers_sort - list or set with keys that need reverse default sort direction
             except_params - GET-params that will be ignored
+            current_sort - effective sort value; if not provided, read from request.GET
         Example:
             view:
                 c['sort_params'] = prepare_sort_params(
@@ -77,7 +78,7 @@ def prepare_sort_params(params, request, sort_key='sort', revers_sort=None, exce
 
 
     """
-    current_param, current_reversed = sort_key_process(request, sort_key)
+    current_param, current_reversed = sort_key_process(request, sort_key, current=current_sort)
 
     except_params = except_params or []
     except_params.append(sort_key)
@@ -103,14 +104,14 @@ def prepare_sort_params(params, request, sort_key='sort', revers_sort=None, exce
     return sort_params
 
 
-def sort_key_process(request, sort_key='sort'):
+def sort_key_process(request, sort_key='sort', current=None):
     """
         process sort-parameter value (for example, "-name")
         return:
             current_param - field for sorting ("name)
             current_reversed - revers flag (True)
     """
-    current = request.GET.get(sort_key)
+    current = current or request.GET.get(sort_key)
     current_reversed = False
     current_param = None
     if current:
