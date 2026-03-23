@@ -111,6 +111,19 @@ class SortMixin(object):
     def get_sort_param_name(self):
         return self.sort_param_name
 
+    def get_sort_param(self):
+        key = self.get_sort_param_name()
+        sort = self.request.GET.get(key)
+        if not sort:
+            sort = self.request.session.get(key)
+        if not sort:
+            sort = self.get_default_sort_param()
+
+        if sort:
+            self.request.session[key] = sort
+
+        return sort
+
     def get_queryset(self):
         qs = super(SortMixin, self).get_queryset()
 
@@ -118,29 +131,15 @@ class SortMixin(object):
             return qs
 
         if self.sort_qs:
-            order_by = self.request.GET[self.get_sort_param_name()]
+            order_by = self.get_sort_param()
             qs = qs.order_by(order_by)
         return qs
 
-    def get(self, request, *args, **kwargs):
-        if not self.sort_default and not request.GET:
-            return super().get(request, *args, **kwargs)
-
-        if not request.GET.get(self.get_sort_param_name()):
-            redirect_url = request.get_full_path()
-            if not request.GET:
-                redirect_url += '?'
-            else:
-                redirect_url += '&'
-            redirect_url += self.get_sort_param_name() + '=' + self.get_default_sort_param()
-            return redirect(redirect_url)
-
-        response = super(SortMixin, self).get(request, *args, **kwargs)
-        return response
-
     @classmethod
     def get_default_sort_param(cls):
-        return cls.sort_params[0]
+        if cls.sort_params:
+            return cls.sort_params[0]
+        return None
 
     def get_sort_except_params(self):
         except_params = []
@@ -154,9 +153,11 @@ class SortMixin(object):
             self.sort_params,
             request=self.request,
             sort_key=self.get_sort_param_name(),
-            except_params=self.get_sort_except_params()
+            except_params=self.get_sort_except_params(),
+            current_sort=self.get_sort_param(),
         )
         return c
+
 
 
 class FilterMixin(object):
